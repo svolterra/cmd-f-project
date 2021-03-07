@@ -6,10 +6,6 @@ import time
 client = discord.Client()
 
 
-#Ideas:
-#Can also add self-care tips for break
-#Can add encouraging messages while timer is counting down
-
 study_encouragements = [
     "You can do it!", "You got this!", "Do your best!", "Shoot for the stars!",
     "I believe in you!", " It always seems impossible until it’s done.",
@@ -24,75 +20,58 @@ self_care = [
     "Get some rest. You deserve it!",
 ]
 
-# def timer_start_study():
-#   seconds = 10
-#   while seconds != 0:
-#     mins, secs = divmod(seconds, 60)
-#     timer = '{:02d}:{:02d}'.format(mins, secs)
-#     print(timer, end="\r")
-#     seconds -= 1
-#     time.sleep(1)
-  
-#   timer_take_break()
-
-# def timer_take_break():
-#   seconds = 5
-#   while seconds != 0:
-#     mins, secs = divmod(seconds, 60)
-#     timer = '{:02d}:{:02d}'.format(mins, secs)
-#     print(timer, end="\r")
-#     seconds -= 1
-#     time.sleep(1)
-
-#   timer_start_study()
+self_care_tips_for_break = [
+  "Get moving! Exercise!", 
+  "Make some tea", 
+  "Chat with some friends or family!", 
+  "Listen to your favourtie music!"
+  "Meditate"
+]
 
 
-def timer_start_break(t1):
-    while t1:
-        mins, secs = divmod(t1, 60)
+# This function starts the break timer. Breaks are 5 mins long
+def break_time(five_mins):
+    while five_mins:
+        mins, secs = divmod(five_mins, 60)
         timer = '{:02d}:{:02d}'.format(mins, secs)
         print(timer, end="\r")
         time.sleep(1)
-        t1 -= 1
-    
+        five_mins -= 1
 
 
-def timer_start_study(t2):
-    while t2:
-        mins, secs = divmod(t2, 60)
+# This function starts the study time. Study times are 25 mins lomg
+def study(twenty_five_mins):
+    while twenty_five_mins:
+        mins, secs = divmod(twenty_five_mins, 60)
         timer = '{:02d}:{:02d}'.format(mins, secs)
         print(timer, end="\r")
         time.sleep(1)
-        t2 -= 1
+        twenty_five_mins -= 1
 
 
-# function call
-# TODO: change the input to 1500 seconds
-t1 = 10
-t2 = 10
-#timer_start_break(t1)
-
+five_mins = 5*60 #5 minutes in seconds
+twenty_five_mins = 25*60 #25 minutes in second
 
 
 @client.event
 async def on_ready():
-  print('Hello I am {0.user}!'.format(client))
+    print('Hello I am {0.user}!'.format(client))
 
 
 async def on_member_join(member):
     await member.create_dm()
     await member.dm_channel.send(
         f'Hi {member.name}, I am Pomodorobo! I will be your study buddy and remind you to take frequent breaks!'
-        )
+    )
 
     await member.dm_channel.send(
-      'Here are my commands:  ' 
-      '\n Say $hello and I will say hello back! 👋' 
-      '\n Send !inspire and I will send you a random inspirational message to keep you going! I belive in you! ✨'
-      '\n Send !care and I will remind you to give yourself some time for self-care (I need it too!) ❤️'
-      '\n Send !pomodoro and I will remind you to take frequent breaks using the Pomodoro technique!' 
-      ) 
-
+        'Here are my commands:  '
+        '\n Say **$hello** and I will say hello back! 👋'
+        '\n Send **!inspire** and I will send you a random inspirational message to keep you going! I believe in you! ✨'
+        '\n Send **!care** and I will remind you to give yourself some time for self-care (I need it too!) ❤️'
+        '\n Send **!pomodoro** and I will remind you to take frequent breaks using the Pomodoro technique!'
+        '\n Send **!tips** and I will give you some suggestions for things to do while taking a break!'
+        )
 
 
 @client.event
@@ -105,30 +84,42 @@ async def on_message(message):
         await message.add_reaction('\U0001F44B')
 
     if message.content.startswith('!inspire'):
-        response = random.choice(study_encouragements)
-        await message.channel.send(response)
-        await message.add_reaction("✨")
+       response = random.choice(study_encouragements)
+       await message.author.send(response)
+       await message.add_reaction("✨")
 
     if message.content.startswith("!care"):
-        care_response = random.choice(self_care)
-        await message.channel.send(care_response)
-        await message.add_reaction('\U0001F917', '\U0001F49C')
+      response = random.choice(self_care)
+      await message.author.send(response)
+      await message.add_reaction('\U0001F917', '\U0001F49C')
+        
+    if message.content.startswith("!tips"):
+      await message.add_reaction('\U0001F601')
+      tips_response = random.choice(self_care_tips_for_break)
+      await message.author.send(tips_response)
+      await message.add_reaction('\U0001F917', '\U0001F49C')
 
-    if message.content.startswith("pomodoro!"):
+    if message.content.startswith("!pomodoro"):
         await message.add_reaction('\U0001F345')
         await message.author.send("Let's study hard! 25 minutes on the clock!")
-        timer_start_study(t2)
+        study(twenty_five_mins)
         await message.author.send("Time to take a 5 minute break!")
-        timer_start_break(t1)
-        await message.author.send("If you would like to reset timer, please send !repeat to the chat!")
+        break_time(five_mins)
+        await message.author.send("If you would like to reset timer, please send **!repeat** to the chat!")
 
     if message.content.startswith('!repeat'):
-      channel = message.channel
-      await channel.send('Back to studying! You got this!')
-      timer_start_study(t2)
-      await message.author.send("Great work! Five minute break time!")
-      timer_start_break(t1)
-      await message.author.send("If you would like to reset timer, please send !repeat to the chat!")
-
+        channel = message.channel
+        await channel.send('Back to studying! You got this!')
+        study(twenty_five_mins)
+        await message.author.send("Great work! Five minute break time!")
+        break_time(five_mins)
+        await message.author.send(
+            "If you would like to reset timer again, please send !repeat to the chat!")
+        await message.author.send(
+            "Remember to take a 45 minute break after four 25 minute study sessions (4 pomodoro cycles)! ❤️")
+    
  
+    
+
+
 client.run(os.getenv('TOKEN'))
