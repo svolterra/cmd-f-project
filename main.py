@@ -82,6 +82,19 @@ async def on_message(message):
     if message.content.startswith('!hello'):
         await message.channel.send('Hello!')
         await message.add_reaction('\U0001F44B')
+        
+    if message.content.startswith('!introduce'):
+       await message.author.send(
+        'Hi there, I am Pomodorobo! I will be your study buddy and remind you to take frequent breaks!'
+    )
+      await message.author.send(
+        'Here are my commands:  '
+        '\n Say **!hello** and I will say hello back! 👋'
+        '\n Send **!inspire** and I will send you a random inspirational message to keep you going! I believe in you! ✨'
+        '\n Send **!care** and I will remind you to give yourself some time for self-care (I need it too!) ❤️'
+        '\n Send **!pomodoro** and I will remind you to take frequent breaks using the Pomodoro technique!'
+        '\n Send **!tips** and I will give you some suggestions for things to do while taking a break!'
+      )
 
     if message.content.startswith('!inspire'):
        response = random.choice(study_encouragements)
