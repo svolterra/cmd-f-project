@@ -19,6 +19,8 @@ Functions and Available Commands
 
 Say  ```!hello``` and I will say hello back! 👋 
 
+Send ```!introduce``` and I will show you all the commands I have to offer!
+
 Send ```!inspire``` and I will send you a random inspirational message to keep you going! I believe in you! ✨
 
 Send ```!care``` and I will remind you to give yourself some time for self-care (I need it too!) ❤️
